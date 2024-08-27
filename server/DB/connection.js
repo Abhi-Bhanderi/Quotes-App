@@ -1,6 +1,6 @@
 const mongoose = require("mongoose");
 const connectDB = async (MONGO_PASS) => {
-  const CONNECTION_URL = `mongodb+srv://AbhiBhanderi:${MONGO_PASS}@nikhilquotes.2px3oxk.mongodb.net/?retryWrites=true&w=majority&appName=NikhilQuotes`;
+  const CONNECTION_URL = `mongodb+srv://AbhiBhanderi:${MONGO_PASS}@nikhilquotes.2px3oxk.mongodb.net/data?retryWrites=true&w=majority&appName=NikhilQuotes`;
   try {
     mongoose.set("strictQuery", true);
     await mongoose.connect(CONNECTION_URL, {

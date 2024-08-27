@@ -47,6 +47,26 @@ const getQuotes = asyncHandler(async (req, res, next) => {
   }
 });
 
+const getRandomQuote = asyncHandler(async (req, res) => {
+  const authHeader = req.headers.authorization;
+  let userID = null;
+  if (authHeader) {
+    const token = authHeader.split(" ")[1];
+    const decoded = jwt.verify(token, process.env.JWT_SECRET);
+    const { id } = decoded;
+    userID = id;
+  }
+
+  let qoutes = await Quote.aggregate([{ $sample: { size: 1 } }]);
+
+  return res.status(200).json({
+    status: true,
+    code: 200,
+    message: "Random quote is here",
+    data: qoutes,
+  });
+});
+
 // @desc     Set Quotes`
 // @route    POST /api/Quote
 // @access   Private
@@ -416,6 +436,7 @@ function response(data, text) {
 
 module.exports = {
   getQuotes,
+  getRandomQuote,
   createQuote,
   createTodaysQuote,
   updateQuote,

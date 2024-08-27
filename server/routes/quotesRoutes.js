@@ -2,6 +2,7 @@ const router = require("express").Router();
 
 const {
   getQuotes,
+  getRandomQuote,
   createQuote,
   createTodaysQuote,
   updateQuote,
@@ -16,6 +17,7 @@ const verifyToken = require("../middleware/authMiddleware.js");
 
 // Quotes
 router.route("/get/all").get(getQuotes);
+router.route("/get/random").get(getRandomQuote);
 router.route("/create").post(createQuote);
 router.route("/today/create").post(createTodaysQuote);
 router.route("/update/:id").put(updateQuote);
