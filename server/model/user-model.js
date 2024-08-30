@@ -1,4 +1,5 @@
-const mongoose = require("mongoose");
+import mongoose from "mongoose";
+
 const UserSchema = new mongoose.Schema(
   {
     username: {
@@ -15,16 +16,11 @@ const UserSchema = new mongoose.Schema(
       required: [true, "Image URL is Required."],
       // unique: [true, "Provide Different Image."],
     },
-    favorites: {
-      type: [String],
-      default: [],
-    },
-    fromGoogle: {
-      type: Boolean,
-      default: false,
-    },
+    favorites: [
+      { type: mongoose.Schema.Types.ObjectId, ref: "Quote", default: [] },
+    ],
   },
   { timestamps: true }
 );
 
-module.exports = mongoose.model("User", UserSchema);
+export default mongoose.model("User", UserSchema);
