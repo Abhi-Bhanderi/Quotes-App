@@ -44,7 +44,7 @@ export const refreshToken = (req, res, next) => {
 
   jwt.verify(
     req.body.refreshToken,
-    process.env.REFRESH_TOKEN_SECRET,
+    process.env.SECRET_REFRESH_TOKEN,
     asyncHandler(async (err, decoded) => {
       if (err) return next(new AppError(403, "Forbidden"));
 
