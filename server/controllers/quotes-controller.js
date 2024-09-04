@@ -110,10 +110,10 @@ export const addFavorite = asyncHandler(async (req, res, next) => {
       new AppError(400, "Somthing went wrong while adding the favrite.")
     );
 
-  return res.status(204).json({
+  return res.status(200).json({
     status: true,
     code: 200,
-    data: { user: userWithFavQuotes },
+    message: `Qoute Added to the favorites with the Id: ${userWithFavQuotes._id}`,
   });
 });
 
@@ -130,7 +130,7 @@ export const getFavorites = asyncHandler(async (req, res, next) => {
   return res.status(200).json({
     status: true,
     code: 200,
-    data: { user },
+    data: { favorites: user.favorites },
   });
 });
 
@@ -162,9 +162,9 @@ export const removeFavorite = asyncHandler(async (req, res, next) => {
       new AppError(400, "Somthing went wrong while adding the favrite.")
     );
 
-  return res.status(204).json({
+  return res.status(200).json({
     status: true,
     code: 200,
-    data: { user: userWithRemovedFav },
+    message: `Qoute Removed from the favorites with the Id: ${userWithRemovedFav._id}`,
   });
 });
