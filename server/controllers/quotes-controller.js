@@ -127,10 +127,17 @@ export const getFavorites = asyncHandler(async (req, res, next) => {
   if (!user)
     return next(new AppError(404, "No user found with the provided user Id"));
 
+  const favoritesIds = new Set(user.favorites.map((u) => u._id.toString()));
+
+  const favoriteQuotes = user.favorites.map((q) => ({
+    ...q._doc,
+    isUserFavorite: favoritesIds.has(q._id.toString()),
+  }));
+
   return res.status(200).json({
     status: true,
     code: 200,
-    data: { favorites: user.favorites },
+    data: { favorites: favoriteQuotes },
   });
 });
 
