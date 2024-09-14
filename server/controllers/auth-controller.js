@@ -66,6 +66,6 @@ function generateAccessToken(id) {
 }
 function generateRefreshToken(id) {
   return jwt.sign({ userId: id }, process.env.SECRET_REFRESH_TOKEN, {
-    expiresIn: "7d",
+    expiresIn: "1y",
   });
 }
