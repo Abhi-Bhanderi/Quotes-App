@@ -2,9 +2,10 @@ import asyncHandler from "express-async-handler";
 import AppError from "../lib/app-error.js";
 import Quote from "../model/quotes-model.js";
 import User from "../model/user-model.js";
+import { format, isValid, parse } from "date-fns";
 
 export const getQuotes = asyncHandler(async (req, res) => {
-  const { search } = req.query;
+  const { search, sort } = req.query;
   const page = Number(req.query.page) || 1;
   const limit = Number(req.query.limit) || 6;
   const skip = (page - 1) * limit * 1;
@@ -20,14 +21,31 @@ export const getQuotes = asyncHandler(async (req, res) => {
     };
   }
 
-  const quotes = await Quote.find(queryObj).skip(skip).limit(limit);
+  let sortBy = 1;
+  if (sort) {
+    if (sort === "latest") {
+      sortBy = -1;
+    }
+    if (sort === "oldest") {
+      sortBy = 1;
+    }
+  }
+  const quotes = await Quote.find(queryObj)
+    .skip(skip)
+    .limit(limit)
+    .sort({ date: sortBy });
 
   if (!req.isAuth) {
+    const quotesWithFormmatedDate = quotes.map((q) => ({
+      ...q._doc,
+      date: format(q.date, "MMM d, yyyy"),
+    }));
+
     return res.status(200).json({
       status: true,
       code: 200,
       results: quotes.length,
-      data: quotes,
+      data: quotesWithFormmatedDate,
     });
   }
 
@@ -40,6 +58,7 @@ export const getQuotes = asyncHandler(async (req, res) => {
   const quotesWithFav = quotes.map((q) => ({
     ...q._doc,
     isUserFavorite: favoritesIds.has(q._id.toString()),
+    date: format(q.date, "MMM d, yyyy"),
   }));
 
   return res.status(200).json({
@@ -57,14 +76,25 @@ export const getRandomQuote = asyncHandler(async (req, res) => {
     status: true,
     code: 200,
     message: "Random quote is here",
-    data: { quotes: qoutes[0] },
+    data: {
+      quotes: {
+        ...qoutes[0],
+        date: format(qoutes[0].date, "MMM d, yyyy"),
+      },
+    },
   });
 });
 
 export const createSingleQuote = asyncHandler(async (req, res, next) => {
   if (!req.body) return next(new AppError(404, "Quote not found!"));
 
-  let qoute = await Quote.create(req.body);
+  const dateStr = req.body.date;
+
+  const date = parse(dateStr, "MMM d, yyyy", new Date());
+
+  const data = { ...req.body, date };
+
+  let qoute = await Quote.create(data);
 
   return res.status(200).json({
     status: true,
@@ -76,12 +106,29 @@ export const createSingleQuote = asyncHandler(async (req, res, next) => {
 export const createMany = asyncHandler(async (req, res, next) => {
   if (!req.body) return next(new AppError(404, "Quotes not found!"));
 
-  let qoutes = await Quote.insertMany(req.body);
+  const quotesWithDate = req.body.map((quote) => {
+    const dateStr = quote.date;
 
-  return res.status(200).json({
+    // Parse the date string into a Date object
+    const date = parse(dateStr, "MMM d, yyyy", new Date());
+
+    // Check if the parsed date is valid
+    if (!isValid(date)) {
+      return next(new AppError(400, "Invalid Date."));
+    }
+
+    // Save the parsed Date object, not a formatted string
+    quote.date = date;
+
+    return quote;
+  });
+
+  const quotes = await Quote.insertMany(quotesWithDate);
+
+  res.status(200).json({
     status: true,
     code: 200,
-    data: { qoutes },
+    data: { quotes },
   });
 });
 

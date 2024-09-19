@@ -3,8 +3,9 @@ import mongoose from "mongoose";
 const QuotesSchema = new mongoose.Schema(
   {
     date: {
-      type: String,
+      type: Date,
       required: [true, "date must be Provided"],
+      unique: [true, "date must be Unique"],
     },
     video_link: {
       type: String,

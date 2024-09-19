@@ -14,7 +14,7 @@ const router = Router();
 
 router.route("/").get(UnStrictlyProtected, getQuotes);
 router.route("/random").get(getRandomQuote);
-router.route("/").post(StrictlyProtected, createSingleQuote);
+router.route("/").post(createSingleQuote);
 router.route("/many").post(StrictlyProtected, createMany);
 
 // Mutate Favorites

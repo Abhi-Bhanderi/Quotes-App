@@ -29,7 +29,7 @@ const Form = ({}: Props) => {
   const AddQuote = async (data: QuoteType) => {
     try {
       const response = await axios.post(
-        "https://vast-rose-llama-cuff.cyclic.app/api/quotes/create/",
+        "http://localhost:8000/api/quotes/",
         data
       );
 
