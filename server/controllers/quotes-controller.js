@@ -179,6 +179,7 @@ export const getFavorites = asyncHandler(async (req, res, next) => {
   const favoriteQuotes = user.favorites.map((q) => ({
     ...q._doc,
     isUserFavorite: favoritesIds.has(q._id.toString()),
+    date: format(q.date, "MMM d, yyyy"),
   }));
 
   return res.status(200).json({
