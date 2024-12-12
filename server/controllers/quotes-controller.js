@@ -6,6 +6,7 @@ import { format, isValid, parse } from "date-fns";
 
 export const getQuotes = asyncHandler(async (req, res) => {
   const { search, sort } = req.query;
+  console.log("getQuotes ~ search:", search);
   const page = Number(req.query.page) || 1;
   const limit = Number(req.query.limit) || 6;
   const skip = (page - 1) * limit * 1;
@@ -14,10 +15,7 @@ export const getQuotes = asyncHandler(async (req, res) => {
 
   if (search) {
     queryObj = {
-      $or: [
-        { quote: { $regex: search, $options: "i" } },
-        { date: { $regex: search, $options: "i" } },
-      ],
+      $or: [{ quote: { $regex: search, $options: "i" } }],
     };
   }
 
